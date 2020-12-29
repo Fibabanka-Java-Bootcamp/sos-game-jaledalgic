@@ -3,15 +3,17 @@ package org.kodluyoruz;
 import java.util.Random;
 import java.util.Scanner;
 
+import java.util.Random;
+import java.util.Scanner;
+
 
 public class Main {
-    static int n;
-    static int score=0;
+    static int n=0;
     static String move_pc;
     static String move_player;
-    static int score_pc=0;
-    static int score_player=0;
-    static int count=0;
+    static int pcScore =0;
+    static int playerScore =0;
+
     public static void main(String[] args) {
         int cont=0;
 
@@ -44,16 +46,16 @@ public class Main {
                 move_pc="S";
                 move_player="O";
             }else if(rand_move==0){
-                move_pc="0";
+                move_pc="O";
                 move_player="S";
             }
-            startPlayer(blank_mat,move_player);
+            startPlayer(blank_mat);
         }else if(player==0) {
             if(rand_move==1){
                 move_pc="S";
                 move_player="O";
             }else if(rand_move==0){
-                move_pc="0";
+                move_pc="O";
                 move_player="S";
             }
             startPc(blank_mat);
@@ -61,15 +63,15 @@ public class Main {
 
 
     }
-    public static void startPlayer(String matris[][],String move){
+    public static void startPlayer(String matris[][]){
         Scanner key=new Scanner(System.in);
-        int x=key.nextInt();
-        int y=key.nextInt();
-        if(x<n && x>=0 && y<n && y>=0) {
-            moveControl(x, y, matris, move);
+        int pos_x=key.nextInt();
+        int pos_y=key.nextInt();
+        if(pos_x<n && pos_x>=0 && pos_y<n && pos_y>=0) {
+            moveControl(pos_x, pos_y, matris, move_player);
         }else{
             System.out.println("Lütfen oyun dışına çıkmayın:");
-            startPlayer(matris,move_player);
+            startPlayer(matris);
         }
     }
     public static void startPc(String matris[][]){
@@ -85,22 +87,41 @@ public class Main {
             matris[x][y] = move;
             printMatris(matris);
             if (move.equals(move_player) ) {
-                score_player+=scoreCalculate(x,y,matris,move);
-                System.out.println("Oyuncu puanı:" + score_player);
-                System.out.println("Bilgisayar puanı:" + score_pc);
-                if(isEmpty(matris)){
+                int point_player=0;
+                point_player=scoreCalculate(x,y,matris,move);
+                playerScore +=point_player;
+                System.out.println("Oyuncu puanı:" + playerScore);
+                System.out.println("Bilgisayar puanı:" + pcScore);
+                if(point_player>=1 && isEmpty(matris)) {
+                    startPlayer(matris);
+                }
+                else if(isEmpty(matris)){
                     startPc(matris);}
-            } else if (move.equals(move_pc)) {
-                score_pc+=scoreCalculate(x,y,matris,move);
-                System.out.println("Oyuncu puanı:" + score_player);
-                System.out.println("Bilgisayar puanı:" + score_pc);
-                if (isEmpty(matris)){
-                    startPlayer(matris,move_player);}
+                else if(!(isEmpty(matris))){
+                    win();
+                }
+            }else if (move.equals(move_pc)) {
+                int point_pc=0;
+                point_pc=scoreCalculate(x,y,matris,move);
+                pcScore +=point_pc;
+                System.out.println("Oyuncu puanı:" + playerScore);
+                System.out.println("Bilgisayar puanı:" + pcScore);
+                if( isEmpty(matris)) {
+                    if(point_pc>=1) {
+                        startPc(matris);
+                    }
+                    else {
+                        startPlayer(matris);
+                    }
+                }else{
+                    win();
+                }
+
             }
         } else if (move.equals(move_player)) {
 
             System.out.println("Lütfen tekrar konum girin:");
-            startPlayer(matris,move_player);
+            startPlayer(matris);
         } else if (move.equals(move_pc)) {
             //System.out.println("Geçersiz konum girildi. Tekrar konum bekleniyor:");
 
@@ -119,7 +140,7 @@ public class Main {
             }
         }
         System.out.println("GAME OVER");
-        win();
+
         return false;
     }
     public static void printMatris(String matCheck[][]){
@@ -135,45 +156,70 @@ public class Main {
 
     }
     public static int scoreCalculate(int x, int y, String mat[][], String move){
+        int score=0;
+        System.out.println(move_player);
+        System.out.println(move_pc);
+
         if(move.equals("S")){
-            if(y<=n-3 && x<=n-1 && (mat[x][y+1]+mat[x][y+2]).equals("OS")){  //sağa yatay
-                System.out.println(mat[x][y+1]+mat[x][y+2]);
-                score+=1;
-            }if(x<=n-3 && y<=n-1 && (mat[x+1][y]+mat[x+2][y]).equals("OS")){ //üstten dikey
-                System.out.println(mat[x+1][y]+mat[x+2][y]);
-                score+=1;
-            }if(y>=2 && x<=n-1 && (mat[x][y-1]+mat[x][y-2]).equals("OS")){ //sola yatay
-                System.out.println(mat[x][y-1]+mat[x][y-2]);
-                score+=1;
-            }if(x>=2 && y<=n-1 && (mat[x-1][y]+mat[x-2][y]).equals("OS")){ //alttan dikey
-                score+=1;
-            }if(x<=n-3 && y<=n-3 && (mat[x+1][y+1]+mat[x+2][y+2]).equals("OS")) { //sağ alta çapraz
-                score+=1;
-
-            }if(x<=n-3 && y>=2 && (mat[x+1][y-1]+mat[x+2][y-2]).equals("OS")){  //sol alta çapraz
-                score+=1;
-
-            }if(x>=2 && y>=2 && (mat[x-1][y-1]+mat[x-2][y-2]).equals("OS")){  //sol üste çapraz
-                System.out.println(mat[x-1][y-1]+mat[x-2][y-2]);
-                score+=1;
-
-            }if(x>=2 && y<=n-3 && (mat[x-1][y+1]+mat[x-2][y+2]).equals("OS")){  //sağ üste çapraz
-                score+=1;
-
-            }
-            System.out.println(score);
+            if(y<=n-3 && x<=n-1){
+                if((((mat[x][y+1])+(mat[x][y+2])).equals("OS"))){  //sağa yatay
+                    score+=1;
+                }}
+            if(x<=n-3 && y<=n-1) {
+                if((((mat[x+1][y])+(mat[x+2][y])).equals("OS"))){ //üstten dikey
+                    score+=1;
+                }}
+            if(y>=2 && x<=n-1 ){
+                if((((mat[x][y-1])+(mat[x][y-2])).equals("OS"))){ //sola yatay
+                    score+=1;
+                }}
+            if(x>=2 && y<=n-1 ){
+                if((((mat[x-1][y])+(mat[x-2][y])).equals("OS"))){ //alttan dikey
+                    score+=1;
+                }}
+            if(x<=n-3 && y<=n-3){
+                if((((mat[x+1][y+1])+(mat[x+2][y+2])).equals("OS"))) { //sağ alta çapraz
+                    score+=1;
+                }}
+            if(x<=n-3 && y>=2){
+                if((((mat[x+1][y-1])+(mat[x+2][y-2])).equals("OS"))){  //sol alta çapraz
+                    score+=1;
+                }}
+            if(x>=2 && y>=2){
+                if((((mat[x-1][y-1])+(mat[x-2][y-2])).equals("OS"))){  //sol üste çapraz
+                    score+=1;
+                }}
+            if(x>=2 && y<=n-3){
+                if((((mat[x-1][y+1])+(mat[x-2][y+2])).equals("OS"))){  //sağ üste çapraz
+                    score+=1;
+                }}
 
         }
-        System.out.println(score);
+        else if(move.equals("O")){
+            if(x<=n-1 && y>=1 && y<=n-2 && ((mat[x][y-1]).equals("S")) && ((mat[x][y+1]).equals("S"))){
+                score+=1;
+            }
+            if(x<n-1 && x!=0 && y<=n-1 && ((mat[x-1][y]).equals("S")) && ((mat[x+1][y]).equals("S"))){
+                score+=1;
+            }
+            if(x!=0 && x<=n-2 && y!=0 && y<=n-2){
+                if(((mat[x-1][y-1]).equals("S")) && ((mat[x+1][y+1]).equals("S"))){
+                    score+=1;
+                }
+                if(((mat[x-1][y+1]).equals("S")) && ((mat[x+1][y-1]).equals("S"))){
+                    score+=1;
+                }
+            }
+        }
         return score;
 
     }
     public static void win(){
-        if(score_player>score_pc){
+        if(playerScore > pcScore){
             System.out.println("Oyuncu kazandı.");
-        }else if(score_pc>score_player){
+        }else if(pcScore > playerScore){
             System.out.println("Bilgisayar kazandı.");
-        }else if(score_player==score_pc){
+        }else if(playerScore == pcScore){
             System.out.println("Berabere bitti.");
         }
     }
