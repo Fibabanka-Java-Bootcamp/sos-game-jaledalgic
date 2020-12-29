@@ -3,9 +3,6 @@ package org.kodluyoruz;
 import java.util.Random;
 import java.util.Scanner;
 
-import java.util.Random;
-import java.util.Scanner;
-
 
 public class Main {
     static int n=0;
