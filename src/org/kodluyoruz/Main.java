@@ -62,8 +62,8 @@ public class Main {
     }
     public static void startPlayer(String matris[][]){
         Scanner key=new Scanner(System.in);
-        int pos_x=key.nextInt();
-        int pos_y=key.nextInt();
+        int pos_x=key.nextInt()-1;
+        int pos_y=key.nextInt()-1;
         if(pos_x<n && pos_x>=0 && pos_y<n && pos_y>=0) {
             moveControl(pos_x, pos_y, matris, move_player);
         }else{
@@ -143,9 +143,14 @@ public class Main {
     public static void printMatris(String matCheck[][]){
 
         int size = matCheck.length;
+        for(int k=1;k<=n;k++){
+            System.out.print("  " +k);
+        }
+        System.out.println();
         for (int i = 0; i < size; i++) {
+            System.out.print(i+1+" ");
             for (int j = 0; j < size; j++) {
-                System.out.print(matCheck[i][j]);
+                System.out.print(matCheck[i][j]+"  ");
             }
             System.out.println();
         }
@@ -221,4 +226,3 @@ public class Main {
         }
     }
 }
-
